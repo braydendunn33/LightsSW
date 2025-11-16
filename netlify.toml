@@ -1,0 +1,38 @@
+[build]
+  publish = "."
+
+# Map CMS public URLs (/uploads/...) to where files actually live (static/uploads)
+[[redirects]]
+  from = "/uploads/*"
+  to   = "/static/uploads/:splat"
+  status = 200
+
+# Force HTTPS (fixes “Not secure” + mixed content)
+[[redirects]]
+  from = "http://lightsidaho.com/*"
+  to   = "https://lightsidaho.com/:splat"
+  status = 301
+  force = true
+
+# Nice /success (no trailing file)
+[[redirects]]
+  from = "/success"
+  to   = "/success/"
+  status = 301
+
+# Security headers (HSTS, etc.)
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Content-Security-Policy = "upgrade-insecure-requests"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "SAMEORIGIN"
+    X-XSS-Protection = "0"
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload"
+
+# Long-cache uploads (optional; safe if you replace files with new names)
+[[headers]]
+  for = "/uploads/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
